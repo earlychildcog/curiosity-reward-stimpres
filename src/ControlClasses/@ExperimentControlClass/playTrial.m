@@ -8,6 +8,9 @@ framedur = framedurRew; % QUICK FIX -- NEED TO MAKE IT WORK FOR DIFFERENT DURATI
 nStimTotal         = xp.settings.nStimTotal;                       % total number of stims
 countFirstROI      = 0;
 
+% print to command line
+fprintf("Trial %d, type %s\n", xp.trial.varValue.trialID, trialtype)
+
 switch trialtype
     % ------ 1. For the real task/the task pilot
     case 'Fam1'          % colouring + animating
@@ -131,7 +134,6 @@ flagTrialStep      = 0;
 flagEndTrial       = 0;
 maxFrameColouring = 4;
 maxFrameRewarding = 12;
-key               = xp.keyboard. key;
 goodbyeMessage    = 'end:-';
 timeLastSound     = GetSecs;
 timeOutOfScreenStart = GetSecs;
@@ -257,7 +259,7 @@ while flagLoop
 
         % checks phase of curtain move for waiting in the middle, or end of movement
         if k == 0 && flagCurtain == 2
-            xp.sound.play
+            xp.sound.play;
             WaitSecs(1)         % wait one more second if movement is happening behind scenes
         elseif k == 1
             xp.eyelink.write('curtain stop moving @%.3fsec',stimOnset)
@@ -286,7 +288,7 @@ while flagLoop
             else
                 rectOut = [];
             end
-            xp.sound.play
+            xp.sound.play;
         end
         iFrameMovement = iFrameMovement + 1;
         k = K(iFrameMovement);
@@ -553,9 +555,8 @@ while flagLoop
     if flagEndTrial == 1
         xp.eyelink.write(goodbyeMessage, GetSecs)
         xp.trial.varValue.durFixFirst = countFirstROI;
-        disp(goodbyeMessage)
-        disp(flagObjectState)
+        fprintf("trial ends with object state %s, and message: %s\n", sprintf("%d ", flagObjectState), goodbyeMessage)
         flagLoop = false;
-        xp.erase
+        xp.erase;
     end
 end

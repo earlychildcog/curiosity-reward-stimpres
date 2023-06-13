@@ -9,7 +9,7 @@ classdef LogControlClass < LogControlClassBase
     properties
     end
     methods
-        function log = LogControlClassBase(pathFile, status)
+        function log = LogControlClass(pathFile, status)
             arguments
                 pathFile string = string([])
                 status logical = false
