@@ -1,7 +1,6 @@
 function flagResult = playTrial(xp, idStimInPosition, trialtype)
 % idStimInPosition: 2xn array
 %% types of trials
-timeOutOfScreenMax = xp.settings.timeOutOfScreenMax;
 framedurRew        = 0.2;
 framedurCol        = 0.1;
 framedur = framedurRew; % QUICK FIX -- NEED TO MAKE IT WORK FOR DIFFERENT DURATIONS
@@ -511,16 +510,17 @@ while flagLoop
 
     %%% checking fixations in boxes
 %     [roiFix, timeFix] = xp.fixCheck([1+(1:nStimOnScreen) 1], true); 
-    if roiFix == 0
-        if timeOutOfScreenStart == Inf
-            timeOutOfScreenStart = timeFix;
-        end
-    else
-        timeOutOfScreenStart = Inf;
-        if roiFix==nStimOnScreen+1
-            roiFix = 0;
-        end
-    end
+    % if roiFix == 0
+    %     if timeOutOfScreenStart == Inf
+    %         timeOutOfScreenStart = timeFix;
+    %     end
+    % else
+    %     timeOutOfScreenStart = Inf;
+    %     if roiFix==nStimOnScreen+1
+    %         roiFix = 0;
+    %     end
+    % end
+
     %%% keyboard check
 %     [keyIsDown,~,keyCode] = PsychHID('KbCheck', xp.keyboard.index);      %reads key pressed
 %     if keyIsDown
@@ -546,7 +546,7 @@ while flagLoop
 
 
     % end of trial checks
-    if flagEndIfLookAway && (timeFix - timeOutOfScreenStart > timeOutOfScreenMax)
+    if flagEndIfLookAway && roiFix == -6
         goodbyeMessage = 'end: watching away @%.3fsec';
         flagEndTrial   = 1;
         flagResult     = 2;

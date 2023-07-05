@@ -13,6 +13,7 @@ classdef ExperimentControlClass < ExperimentControlClassBase
             xp.keyboard = KeyControlClass;
             xp.trial    = TrialControlClass;
             xp.log      = LogControlClass;
+            xp.name = 'curR';   % set experiment name
             if nargin == 0 || ~status
                 return
             else

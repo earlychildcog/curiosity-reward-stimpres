@@ -16,10 +16,11 @@ arguments
 end
 % make sure in case of error that cursor and keyboard are reactivated
 try
+    % syssetWifi("off")
     addpath(genpath('src'))
     start_main(debug)                  %run the experiment script
+    % syssetWifi("on")
     rmpath(genpath('src'))
-    syssetWifi("on")
 catch my_error
     ListenChar(0);                  %reactivate keyboard
     ShowCursor();                   %show cursor again
@@ -31,7 +32,7 @@ catch my_error
         warning('Eyelink not connected or not shutting down properly')
     end
     clear ExperimentControlClass
-    syssetWifi("on")
+    % syssetWifi("on")
     rmpath(genpath('src'))
     rethrow(my_error);              %show what happened in case of an error
 end
@@ -40,7 +41,7 @@ end
 
 function start_main(debug)
 syssetMonitor("eyelink")        % set the intended primary monitor and resolution
-syssetWifi("off")               % turns wifi of
+% syssetWifi("off")               % turns wifi of
 
 %% settings
 eyetrackingOn = true;
@@ -57,7 +58,6 @@ if ismac
 else
     xp.screen.nr  = max(Screen('Screens'));
 end
-xp.getExpName;                          % prompt for experiment name
 xp.setSubjNo;                           % prompt for subject/session numbers
 xp.init;
 xp.trial.videoList = arrayfun(@(x)string(fullfile(x.folder, x.name)), dir('stimuli/videos/03-break/*.mp4'));
@@ -68,9 +68,8 @@ xp.settings.nStimTotal          = 9;
 xp.settings.nStimFamTotal       = 3;
 xp.settings.timeToTrigger       = 0.35;  % time for fixation to trigger
 xp.settings.timeOut             = 0.1;   % time fixating away to reset fixation timer
-xp.settings.timeOutOfScreenMax  = 5;
 xp.settings.durMaxTrial         = Inf;
-xp.settings.durMaxLookAway      = Inf;
+xp.settings.durMaxLookAway      = 5;
 
 if xp.eegon
     NetStationHostName = '10.10.10.42';
@@ -155,8 +154,8 @@ if xp.eegon
     NetStation('StartRecording');
 end
 
-fileRando = sprintf('rand/RandomisationTable_Subj%03d_Session_%d.csv',xp.subject,xp.sessionNo);
-fileRando = 'rand/RandomisationTable_Subj001_Session_1.csv';     % FOR TEST
+fileRando = sprintf('rand/StimOrder_Subj%03d_Session%d.csv',xp.subject,xp.sessionNo);
+% fileRando = 'rand/RandomisationTable_Subj001_Session_1.csv';     % FOR TEST
 % fileRando = sprintf('rand_stim/StimOrderPilotStim_Subj%03d.csv',xp.subject); %FOR STIM PILOT
 RandomisationTable = readtable(fileRando);
 % nTrial = size(RandomisationTable, 1);

@@ -12,14 +12,14 @@ durframe = 0.1;
 newangle = 0;
 rect = xp.screen.rect(:,end-1);
 texture = xp.image.texture{2,1};
-Screen('DrawTexture', xp.screen.win, xp.image.texture{1,1}, [], xp.screen.rect(:,1));
+% Screen('DrawTexture', xp.screen.win, xp.image.texture{1,1}, [], xp.screen.rect(:,1));
 Screen('DrawTexture', xp.screen.win, texture, [], rect,newangle);
 timeStim = xp.flip;
 flagResult = 0;
 timeTrigger0 = GetSecs;
 timeTrigger1 = timeTrigger0;
 timeTriggerSound = timeTrigger0;
-durMaxIn  = 1;
+durMaxIn  = 0.5;
 durMinOut = 0.05;
 xp.eyelink.write('attget start @%.3fsec', timeStim)
 while flagLoop
@@ -29,7 +29,7 @@ while flagLoop
 %     end
 
     if GetSecs - timeStim > durframe
-        Screen('DrawTexture', xp.screen.win, xp.image.texture{1,1}, [], xp.screen.rect(:,1));
+        % Screen('DrawTexture', xp.screen.win, xp.image.texture{1,1}, [], xp.screen.rect(:,1));
         Screen('DrawTexture', xp.screen.win, texture, [], rect,newangle);
         timeStim = xp.flip;
         newangle = mod(newangle - rotationSpeed,360);
