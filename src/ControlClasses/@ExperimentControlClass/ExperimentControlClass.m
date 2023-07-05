@@ -1,6 +1,7 @@
 classdef ExperimentControlClass < ExperimentControlClassBase
     % Some description
     properties    
+        eegon = false
     end
     
     methods

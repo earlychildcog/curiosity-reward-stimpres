@@ -191,6 +191,7 @@ while iTrial < size(RandomisationTable, 1)
     end
     while flagResultAttget == 1
         flagResultAttget = 0;
+        resetFunctions();       % we reset the persistend variabled in the check functions before each trial
         flagResult = playTrial(xp,idStimInPosition, trialtype);
         xp.trial.varValue.result = flagResult;
         xp.eyelink.stoprec
@@ -244,4 +245,9 @@ playVideo(xp, fullfile(pwd, 'stimuli/videos/04-end/ClappingEndExpt.mp4'), 1, 1, 
 
 xp.finish;
 %%
+end
+
+
+function resetFunctions
+clear checkEndTrial checkFix checkROI
 end
