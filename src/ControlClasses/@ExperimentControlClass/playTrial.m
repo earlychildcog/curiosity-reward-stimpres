@@ -7,6 +7,7 @@ framedur = framedurRew; % QUICK FIX -- NEED TO MAKE IT WORK FOR DIFFERENT DURATI
 nStimTotal         = xp.settings.nStimTotal;                       % total number of stims
 countFirstROI      = 0;
 
+idStimSound    = idStimInPosition;
 % print to command line
 fprintf("Trial %d, type %s\n", xp.trial.varValue.trialID, trialtype)
 
@@ -398,7 +399,10 @@ while flagLoop
                         if (roiReward ==  roiFix || ~flagOnlyAnimateFirst) && flagAnimation
                             flagObjectState(roiFix) = 3;
                             roiAnimating            = roiFix;
-                            xp.eyelink.write('trigger reward for %d @%.3fsec',roiFix, timeFix)
+                            xp.eyelink.write('trigger reward for %d @%.3fsec',roiFix, timeFix)                        
+                            xp.sound.stop;
+                            xp.sound.which = xp.sound.data{soundfolder,idStimSound(2,roiAnimating)}; %stimulus related sound
+                            xp.sound.play(0,1,0);
                             % if another already in reward: just freeze it fully revealed
                         else
                             flagObjectState(roiFix) = 2;
@@ -408,7 +412,7 @@ while flagLoop
                             end
                         end
                     end
-
+                                                                                                                                                                                   
                     % if object fully revealed, but not gonna animate reward
                 case 2
                     if roiAnimating > 0 && flagOnlyAnimateFirst
@@ -422,8 +426,8 @@ while flagLoop
                         roiAnimating = roiFix;
                         xp.eyelink.write('start animation for %d state %d: @%.3fsec',roiAnimating, flagObjectState(roiAnimating), timeFix)
                         xp.sound.stop;
-                        xp.sound.which = xp.sound.data{soundfolder,stim}; %stimulus related sound
-                        xp.sound.play;
+                        xp.sound.which = xp.sound.data{soundfolder,idStimSound(2, roiAnimating)}; %stimulus related sound
+                        xp.sound.play(0,1,0);
                     end
             end
         elseif roiAnimating > 0     % for the case that there are fixations to other ROIs that cummilatively add more than timeToTrigger

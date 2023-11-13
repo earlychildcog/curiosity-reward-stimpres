@@ -69,7 +69,7 @@ xp.settings.nStimFamTotal       = 3;
 xp.settings.timeToTrigger       = 0.35;  % time for fixation to trigger
 xp.settings.timeOut             = 0.1;   % time fixating away to reset fixation timer
 xp.settings.durMaxLookAway      = 5;
-xp.settings.durMaxTrial         = 7;    % different setting for fam1 trials (see playtrial function)
+xp.settings.durMaxTrial         = 10;    % different setting for fam1 trials (see playtrial function)
 
 if xp.eegon
     NetStationHostName = '10.10.10.42';
