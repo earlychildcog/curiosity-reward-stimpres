@@ -68,8 +68,8 @@ xp.settings.nStimTotal          = 9;
 xp.settings.nStimFamTotal       = 3;
 xp.settings.timeToTrigger       = 0.35;  % time for fixation to trigger
 xp.settings.timeOut             = 0.1;   % time fixating away to reset fixation timer
-xp.settings.durMaxTrial         = Inf;
 xp.settings.durMaxLookAway      = 5;
+xp.settings.durMaxTrial         = 7;    % different setting for fam1 trials (see playtrial function)
 
 if xp.eegon
     NetStationHostName = '10.10.10.42';
@@ -196,16 +196,6 @@ while iTrial < size(RandomisationTable, 1)
         xp.trial.varValue.result = flagResult;
         xp.eyelink.stoprec
         xp.log.write();
-        % old break -- to remove if new works
-        % if flagResult == -2
-        %     xp.sound.which = xp.sound.data{3,1};
-        %     flagResultBreak = xp.playVideo(fullfile(pwd, 'stimuli/videos/03-break/waybuloo.mp4'), 1, 1);
-        %     if flagResultBreak == -1
-        %         xp.eyelink.calibrate;
-        %     elseif flagResultBreak == 9
-        %         break
-        %     end
-        %     flagResultAttget = attgetPart(xp);
         if flagResult < -20
             idBreak = -flagResult-20;
             xp.sound.which = xp.sound.data{3,idBreak};

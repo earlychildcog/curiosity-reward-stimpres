@@ -19,9 +19,10 @@
 clear all
 PoolFam        = 1:3;
 PoolTest       = 1:9;
-NFamTrials     = 5;
-NColFamTrials  = 2;
-NTestTrials    = 18;
+NBoxFamTrials1 = 3;
+NBoxFamTrials  = NBoxFamTrials1 + 36/6 -1;
+NColFamTrials  = 1;
+NTestTrials    = 36;
 
 
 for iSession = 1:3
@@ -29,12 +30,15 @@ for iSession = 1:3
         %% Get the familiarisation trials
 
         % 1st obj
-        Obj1Fam  = [Shuffle(PoolFam),Shuffle(PoolFam)];
-        Obj1Fam  = Obj1Fam(1:NFamTrials+1);
+        Obj1Fam = [];
+        for iShuffle = 1:(NBoxFamTrials+NColFamTrials)/3
+            Obj1Fam  = [Obj1Fam,Shuffle(PoolFam)];
+        end
+        Obj1Fam  = Obj1Fam(1:NBoxFamTrials+NColFamTrials);
 
         iTrial = 1; % Initialise trial loop
 
-        while iTrial <= NFamTrials +1
+        while iTrial <= NBoxFamTrials + NColFamTrials
 
             % Calculate how many trials passed compared to pool size
             trialRem = rem(iTrial, size(PoolFam,2));  % trials passed sinced whole pool was (re-)sat
@@ -84,9 +88,6 @@ for iSession = 1:3
             iTrial = iTrial + 1;
         end
 
-        % Delete the first trial because there are only 2 fam col trials
-        Obj1Fam(1) = []; Obj2Fam(1) = []; Obj3Fam(1) = [];
-
         % Get a copy of the 3 matrices shuffled into another matrix (this will
         % be the top positions, former values are more controlled: used for the
         % bottom positions)
@@ -106,12 +107,15 @@ for iSession = 1:3
         %% Get the test trials
 
         % 1st obj
-        Obj1Test  = [Shuffle(PoolTest),Shuffle(PoolTest)];
+        Obj1Test = [];
+        for iShuffle = 1:(NTestTrials/2)/3 %using N/2 because half of trials are 'same' with only 1 obj in them
+            Obj1Test  = [Obj1Test,Shuffle(PoolFam)];
+        end
         Obj1Test  = Obj1Test(1:NTestTrials/2);
 
         iTrial = 1; % Initialise trial loop
 
-        while iTrial <= (NTestTrials/2)
+        while iTrial <= NTestTrials/2
 
             % Calculate how many trials passed compared to pool size
             trialRem = rem(iTrial, size(PoolTest,2));  % trials left until whole pool used
@@ -179,41 +183,60 @@ for iSession = 1:3
 
 
         %% Now randomise when trials that are the same will appear
-        iEvenOrOdd     = randsample(repmat([0 1],1,5),NTestTrials/2); %choose even/odd number
-        iItem          = 1:9;
+        iEvenOrOdd     = randsample(repmat([0 1],1,ceil(NTestTrials/2)),ceil(NTestTrials/2)); %choose even/odd number
+        iItem          = 1:ceil(NTestTrials/2);
         iTrialSame     = iItem*2 - iEvenOrOdd;
         iTrialDiff     = iItem*2 - ~iEvenOrOdd;
         % And randomise whether they are visible
-        itemIDSame     = Shuffle(iItem);
+        itemIDSame = [];
+        for iShuffle = 1:ceil((NTestTrials/2)/length(PoolTest)) %using N/2 because half of trials are 'different'
+            itemIDSame  = [itemIDSame,Shuffle(PoolTest)];
+        end
+
+%         itemIDSame     = Shuffle(iItem);
         ObjTopTestOG   = ObjTopTest;
-        for iLoop = 1:9
+        for iLoop = 1:NTestTrials/2
             iTrial = iTrialSame(iLoop);
             ObjTopTest = [ObjTopTest(1:iTrial-1,:); repmat(itemIDSame(iLoop),1,3); ObjTopTest(iTrial:end,:)];
             Obj1Test   = [Obj1Test(1:iTrial-1), itemIDSame(iLoop), Obj1Test(iTrial:end)];
             Obj2Test   = [Obj2Test(1:iTrial-1), itemIDSame(iLoop), Obj2Test(iTrial:end)];
             Obj3Test   = [Obj3Test(1:iTrial-1), itemIDSame(iLoop), Obj3Test(iTrial:end)];
         end
-        %         iTrialSame     = iTrialSame + NFamTrials;
+
+
+        %% Concatenate variables together in the order the trials should appear
+        % Concatenate ObjOrder: 6 columns (3 for ObjTop, 3 for ObjBottom)
+        % and 1 line per trial, starting with Fam1 and Fam2 trials, then
+        % Test trials, and will insert FamRep trials later
+        ObjOrder = [[ObjTopFam(1:NColFamTrials+NBoxFamTrials1,:), Obj1Fam(1:NColFamTrials+NBoxFamTrials1)', Obj2Fam(1:NColFamTrials+NBoxFamTrials1)', Obj3Fam(1:NColFamTrials+NBoxFamTrials1)']; ...
+            [ObjTopTest, Obj1Test', Obj2Test', Obj3Test']];
+        % Create a TrialType var
+        TrialType(1:NColFamTrials)                              = {'Fam1'};
+        TrialType(NColFamTrials+1:NBoxFamTrials1+NColFamTrials) = {'Fam2'};
+        TrialType(iTrialDiff + NBoxFamTrials1 + NColFamTrials)  = {'TestDiff'};
+        TrialType(iTrialSame + NBoxFamTrials1 + NColFamTrials)  = {'TestSame'};
+        % Insert 'FamRep' trials every 6 trials
+        for iBoxFamTrialRepLoop = 1:NBoxFamTrials-NBoxFamTrials1
+            iBoxFamTrialRep = NColFamTrials+NBoxFamTrials1 + iBoxFamTrialRepLoop*6 +iBoxFamTrialRepLoop;
+            % Concatenate trial type
+            TrialType = cat(2, TrialType(1:iBoxFamTrialRep-1), {'FamRep'}, TrialType(iBoxFamTrialRep:end));
+            ObjOrder  = [ObjOrder(1:iBoxFamTrialRep-1,:); ...
+               [ObjTopFam(iBoxFamTrialRepLoop+NColFamTrials+NBoxFamTrials1,:), ...
+               Obj1Fam(iBoxFamTrialRepLoop+NColFamTrials+NBoxFamTrials1)', Obj2Fam(iBoxFamTrialRepLoop+NColFamTrials+NBoxFamTrials1)', Obj3Fam(iBoxFamTrialRepLoop+NColFamTrials+NBoxFamTrials1)'];...
+               ObjOrder(iBoxFamTrialRep:end,:)];
+        end
 
 
         %% Save into a table
-        % Create a TrialType var
-        TrialType(1:NFamTrials)             = {'Fam2'};
-        TrialType(1:NColFamTrials)          = {'Fam1'};
-        TrialType(iTrialDiff + NFamTrials)  = {'TestInvis'};
-        TrialType(iTrialSame + NFamTrials)  = {'TestInvisSame'};
-
         % Create a table
-        RandomisationTable = table(TrialType',...
-            [ObjTopFam(:,1);ObjTopTest(:,1)],[ObjTopFam(:,2);ObjTopTest(:,2)],[ObjTopFam(:,3);ObjTopTest(:,3)],...
-            [Obj1Fam';Obj1Test'],[Obj2Fam';Obj2Test'],[Obj3Fam';Obj3Test']);
+        RandomisationTable = table(TrialType',ObjOrder(:,1),ObjOrder(:,2),ObjOrder(:,3),ObjOrder(:,4),ObjOrder(:,5),ObjOrder(:,6));
         RandomisationTable.Properties.VariableNames = {'TrialType','ObjTop1','ObjTop2','ObjTop3','ObjBottom1','ObjBottom2','ObjBottom3'};
 
         % Save to a CSV file
         writetable(RandomisationTable,sprintf('Stim order/StimOrder_Subj%03d_Session%d.csv',iSubj,iSession));
 
         % Clear before moving on to next participant/session
-        clearvars -except iSession iSubj NFamTrials NColFamTrials NTestTrials PoolFam PoolTest coloursStim
+        clearvars -except iSession iSubj NBoxFamTrials1 NBoxFamTrials NColFamTrials NTestTrials PoolFam PoolTest coloursStim
 
     end
 end

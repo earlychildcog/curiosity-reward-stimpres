@@ -25,11 +25,12 @@ switch trialtype
         maxtime              = 30;
         durStimPostTrig      = 15;
 
+        soundfolder     = 6;
         idStimExtra     = idStimInPosition(2,end:end-1+flagExtra); % extra stim(s) in the beginning; put empty array for none
         idStim          = idStim(1:nStimOnScreen);
         idStimColouring = 3 + idStim;
         idStimReward    = idStimColouring + xp.settings.nStimFamTotal;
-    case 'Fam2'          % visible
+    case {'Fam2', 'FamRep'}          % visible
         flagAnimation        = true;
         flagBox              = true;
         flagCurtain          = 1;
@@ -40,13 +41,14 @@ switch trialtype
         idStim               = idStimInPosition(2,1:end-flagExtra);
         nStimOnScreen        = length(idStim);                     % how many on screen (experiment phase)
         maxtime              = 30;
-        durStimPostTrig      = 10;
+        durStimPostTrig      = xp.settings.durMaxTrial;
 
+        soundfolder     = 6;
         idStimExtra     = idStimInPosition(2,end:end-1+flagExtra); % extra stim(s) in the beginning; put empty array for none
         idStim          = idStim(1:nStimOnScreen);
         idStimColouring = 3 + idStim;
         idStimReward    = idStimColouring + xp.settings.nStimFamTotal;
-    case 'TestInvisSame'  % invisible
+    case 'TestSame'                  % invisible
         flagAnimation        = true;
         flagBox              = true;
         flagCurtain          = 2;
@@ -56,13 +58,14 @@ switch trialtype
         idStim               = idStimInPosition(2,1:end-flagExtra);
         nStimOnScreen        = length(idStim);                     % how many on screen (experiment phase)
         maxtime              = 30;
-        durStimPostTrig      = 10;
+        durStimPostTrig      = xp.settings.durMaxTrial;
 
+        soundfolder     = 5;
         idStimExtra     = idStimInPosition(2,end:end-1+flagExtra); % extra stim(s) in the beginning; put empty array for none
         idStim          = idStim(1:nStimOnScreen);
         idStimColouring = 3 + idStim;
         idStimReward    = idStimColouring + nStimTotal;
-    case 'TestInvis'      % invisible
+    case 'TestDiff'                   % invisible
         flagAnimation        = true;
         flagBox              = true;
         flagCurtain          = 2;
@@ -74,6 +77,7 @@ switch trialtype
         maxtime              = 30;
         durStimPostTrig      = 10;
 
+        soundfolder     = 5;
         idStimExtra     = idStimInPosition(2,end:end-1+flagExtra); % extra stim(s) in the beginning; put empty array for none
         idStim          = idStim(1:nStimOnScreen);
         idStimColouring = 3 + idStim;
@@ -108,6 +112,7 @@ switch trialtype
         maxtime              = 30;
         durStimPostTrig      = 15;
 
+        soundfolder     = 6;
         idStimExtra     = idStimInPosition(2,end:end-1+flagExtra); % extra stim(s) in the beginning; put empty array for none
         idStim          = idStim(1:nStimOnScreen);
         idStimColouring = 3 + idStim;
@@ -167,7 +172,7 @@ while flagLoop
         end
         % draw stimuli
 
-        textureArray = xp.image.texture([idStimColouring (3 + idStimExtra)],1);
+        textureArray = xp.image.texture([idStimColouring, 3 + idStimExtra],1);
 
         % flags››
         flagObjectState    = zeros(1, nStimOnScreen);         % states: 0 - hidden, 1 - partially revealled, 2 - fully revealed, 3 - reward animating
@@ -416,10 +421,14 @@ while flagLoop
                     if roiAnimating ~= roiFix
                         roiAnimating = roiFix;
                         xp.eyelink.write('start animation for %d state %d: @%.3fsec',roiAnimating, flagObjectState(roiAnimating), timeFix)
+                        xp.sound.stop;
+                        xp.sound.which = xp.sound.data{soundfolder,stim}; %stimulus related sound
+                        xp.sound.play;
                     end
             end
         elseif roiAnimating > 0     % for the case that there are fixations to other ROIs that cummilatively add more than timeToTrigger
             xp.eyelink.write('stop animation for %d state %d: @%.3fsec',roiAnimating, flagObjectState(roiAnimating), timeFix)
+            xp.sound.stop;
             roiAnimating = 0;
         end
 
