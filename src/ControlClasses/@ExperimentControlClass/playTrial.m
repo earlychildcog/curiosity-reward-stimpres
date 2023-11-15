@@ -3,15 +3,15 @@ function flagResult = playTrial(xp, idStimInPosition, trialtype)
 %% types of trials
 framedurRew        = 0.2;   % for reward animation
 framedurCol        = 0.05;   % for colouring/revealing
-framedur = framedurRew; % QUICK FIX -- NEED TO MAKE IT WORK FOR DIFFERENT DURATIONS
+framedur           = framedurRew; % QUICK FIX -- NEED TO MAKE IT WORK FOR DIFFERENT DURATIONS
 nStimTotal         = xp.settings.nStimTotal;                       % total number of stims
 countFirstROI      = 0;
 
-boxTex         = 2;
+boxTex                 = 2;
 box_highlight_rect_pad = round([-37 -37 37 37]*0.59)';
 box_highlight_rect_pad = 0;
-idStimSound    = idStimInPosition;
-flagColouringPersist = 0;
+idStimSound            = idStimInPosition;
+flagColouringPersist   = 0;
 % print to command line
 fprintf("Trial %d, type %s\n", xp.trial.varValue.trialID, trialtype)
 
@@ -63,7 +63,7 @@ switch trialtype
         idStim               = idStimInPosition(2,1:end-flagExtra);
         nStimOnScreen        = length(idStim);                     % how many on screen (experiment phase)
         maxtime              = 30;
-        durStimPostTrig      = xp.settings.durMaxTrial;
+        durStimPostTrig      = 10;
 
         soundfolder     = 5;
         idStimExtra     = idStimInPosition(2,end:end-1+flagExtra); % extra stim(s) in the beginning; put empty array for none
@@ -267,7 +267,8 @@ while flagLoop
 
         % checks phase of curtain move for waiting in the middle, or end of movement
         if k == 0 && flagCurtain == 2
-            xp.sound.play;
+            xp.sound.which = xp.sound.data{2,2};
+            xp.sound.play(GetSecs+0.1);
             WaitSecs(0.5)         % wait one more second if movement is happening behind scenes
             boxTex = 3;% draw background
             Screen('DrawTexture', xp.screen.win, xp.image.texture{1,1}, [], xp.screen.rect(:,1));

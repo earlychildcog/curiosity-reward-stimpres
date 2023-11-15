@@ -69,7 +69,7 @@ xp.settings.nStimFamTotal       = 3;
 xp.settings.timeToTrigger       = 0.35;  % time for fixation to trigger
 xp.settings.timeOut             = 0.1;   % time fixating away to reset fixation timer
 xp.settings.durMaxLookAway      = 5;
-xp.settings.durMaxTrial         = 10;    % different setting for fam1 trials (see playtrial function)
+xp.settings.durMaxTrial         = 60;    % different setting for fam1 trials (see playtrial function)
 
 if xp.eegon
     NetStationHostName = '10.10.10.42';
@@ -205,6 +205,14 @@ while iTrial < size(RandomisationTable, 1)
             elseif flagResultBreak == -9
                 break
             end
+            if startsWith(trialtype, 'Test')    % test, recycle to end
+                RandomisationTable = [RandomisationTable; RandomisationTable(iTrial,:)]; %#ok<AGROW>
+                nTrial = nTrial + 1;
+            else    % if fam, replay now
+                flagResultAttget = xp.attgetPart;
+            end
+        elseif flagResult == -1
+            xp.eyelink.calibrate;
             flagResultAttget = xp.attgetPart;
         elseif flagResult == 2 && startsWith(trialtype, 'Test')           % choose a flag for this
             RandomisationTable = [RandomisationTable; RandomisationTable(iTrial,:)]; %#ok<AGROW>
