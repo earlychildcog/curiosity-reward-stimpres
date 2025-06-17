@@ -613,6 +613,7 @@ while flagLoop
     end
 
     if flagEndTrial == 1
+        xp.sound.stop; % necessary to stop 1st character sound loop before exiting the trial
         xp.eyelink.write(goodbyeMessage, GetSecs)
         xp.trial.varValue.durFixFirst = countFirstROI;
         fprintf("trial ends with object state %s, and message: %s\n", sprintf("%d ", flagObjectState), goodbyeMessage)
