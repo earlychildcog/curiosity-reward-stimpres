@@ -1,3 +1,4 @@
+# stimulus-presentation-code
 ## about
 
 Codebase for the experimental task "curiosity: information-as-reward" in the preprint "Infants trade off reward for information: longitudinal evidence for curiosity-driven information-seeking in the second year of life" [0]
