@@ -1,1 +1,39 @@
-# stimulus-presentation-code
+## about
+
+Codebase for the experimental task "curiosity: information-as-reward" in the preprint "Infants trade off reward for information: longitudinal evidence for curiosity-driven information-seeking in the second year of life" [0]
+It runs a realtime gaze-controlled information-seeking task for infants (12m-24m) with eyetracking acquisition. The participant opens boxes by looking at them, and the task is to discover which of 3 items are hiding inside 2 boxes from either a set of all identical items (low-gain, LG trials) or all different (high-gain, HG trials).
+Task structure (from the preprint; please refer to the preprint’s methods for more details):
+
+<img width="1123" height="964" alt="Figure1" src="https://github.com/user-attachments/assets/8b68b1b4-f4ec-4342-abda-d36298eef4ab" />
+
+## technical details
+
+The script is written in MATLAB and uses Psychtoolbox (https://psychtoolbox.org/) for stimuli presentation and synchronisation of data acquisition (version details [1]).
+
+Equipment used for data acquisition:
+
+```
+git clone --recurse-submodules git@github.com:earlychildcog/curiosity-reward-stimpres.git  
+```
+
+The script will require modifications to work on different equipment setups. However, we have reused part of the code to run tasks on Windows with a different eyetracker, and we have run part of our troubleshooting on MacOS, so using different OSes should be possible with minimal effort. Otherwise, to start with it, run this in your computer’s terminal:
+
+git clone --recurse-submodules git@github.com:earlychildcog/curiosity-reward-stimpres.git  
+
+The `--recurse-submodules` flag is needed because the repository requires a second repository [2] in `src/base` which contains generic classes (used across experiments in the lab) from which we derive the task-specific classes.  
+To run the experiment, in the MATLAB command line simply run `curiosityR_start` and follow the instructions in the command line. You can use the flag `2` by running `curiosityR_start(2)` to trial run with no eyetracking and control the experiment with the keyboard.  
+Of course, you need MATLAB and Psychtoolbox installed first.  
+Note: Requires modification of the Eyelink integration scripts (part of Psychtoolbox) due to legacy/broken audio implementation used. This may have been fixed in newer versions of the toolbox. Refer to `src/base/helperFunctions/eyelink-scripts` for instructions how to make Eyelink toolbox work properly. It may need to be done again when Psychtoolbox is updated, and it may be required even if Eyelink toolbox is upstream fixed if the new version is incompatible.  
+We would love for anyone to inspire their own research from our script — you are welcome to adapt it, and we are happy to be contacted for help if you encounter any bugs or issues with it. You can either create a new github issue [here](https://github.com/earlychildcog/curiosity-error-stimpres/issues/new/choose) or look for our contact information (links to github). We will do our best to respond but please be mindful of our time as this project ended and we will be helping you in our free time.  
+
+## authors & contributors
+
+Codebase developed by D. Askitis and C. Gal, implementing the task in [0]. All three coauthors (C. Gal., D. Askitis, & K. Begus) contributed to the iterative refinement and validation of the experimental implementation.
+
+## license & crediting
+
+The software is provided as-is, and is available as open source under the terms of the MIT License.
+If you use this software in academic work, please credit our work by citing it [0].
+
+[0] Gal, C., Askitis, D., & Begus, K. (2026). 
+[1] Tested on MATLAB 2023a, with Psychtoolbox version '3.0.19 - Flavor: Debian package - psychtoolbox-3 (3.0.19.2.dfsgl-1~nd22.04+1). Host computer ran Ubuntu 22.04 lts. [2] https://github.com/earlychildcog/yapwrap
