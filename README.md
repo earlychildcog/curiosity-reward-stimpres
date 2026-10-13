@@ -1,6 +1,8 @@
 # stimulus-presentation-code
 ## about
 
+Find the latest version at https://github.com/earlychildcog/curiosity-reward-stimpres/
+
 Codebase for the experimental task "curiosity: information-as-reward" in the preprint "Infants trade off reward for information: longitudinal evidence for curiosity-driven information-seeking in the second year of life" [0]
 It runs a realtime gaze-controlled information-seeking task for infants (12m-24m) with eyetracking acquisition. The participant opens boxes by looking at them, and the task is to discover which of 3 items are hiding inside 2 boxes from either a set of all identical items (low-gain, LG trials) or all different (high-gain, HG trials).
 Task structure (from the preprint; please refer to the preprint’s methods for more details):
